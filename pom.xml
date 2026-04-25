@@ -98,7 +98,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.example.apknihovnaklient/com.example.apknihovnaklient.HelloApplication</mainClass>
+                            <mainClass>com.example.apknihovnaklient/com.example.client.HelloApplication</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
