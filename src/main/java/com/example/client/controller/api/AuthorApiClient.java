@@ -4,6 +4,7 @@ import com.example.client.dto.AuthorRequestDto;
 import com.example.client.dto.AuthorResponseDto;
 import com.example.client.dto.ErrorResponseDto;
 import com.example.client.dto.PageResponse;
+import com.example.client.util.LanguageManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +34,7 @@ public class AuthorApiClient {
                     new TypeReference<List<AuthorResponseDto>>() {}
             );
         } else {
-            throw new RuntimeException("Error loading authors: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.autor.error.load") + response.statusCode());
         }
     }
     public void createAuthor(AuthorRequestDto authorRequest) throws Exception {
@@ -48,7 +49,7 @@ public class AuthorApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 201 && response.statusCode() != 200) {
-            throw new RuntimeException("Error saving author: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.autor.error.save") + response.statusCode());
         }
     }
 }

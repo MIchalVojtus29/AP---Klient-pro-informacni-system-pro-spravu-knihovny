@@ -102,7 +102,7 @@ public class EditBookController {
 
         } catch (IOException e) {
             e.printStackTrace();
-            showError("Error", "Failed to open window: " + e.getMessage());
+            showError(resources.getString("error.title"), resources.getString("error.modal.open") + ": " + e.getMessage());
         }
     }
 
@@ -185,7 +185,7 @@ public class EditBookController {
     }
 
     private void handleLoadError(Throwable ex) {
-        System.err.println("Loading error: " + ex.getMessage());
+        System.err.println(resources.getString("error.load.title") + ex.getMessage());
     }
 
     private void closeWindow() {

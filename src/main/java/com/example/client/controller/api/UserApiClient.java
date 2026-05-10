@@ -1,5 +1,7 @@
 package com.example.client.controller.api;
 
+import com.example.client.util.LanguageManager;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -31,7 +33,7 @@ public class UserApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
-            throw new RuntimeException("Error loading users from the server. Status: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.user.error.load") + response.statusCode());
         }
 
         return response.body();
@@ -48,7 +50,7 @@ public class UserApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200 && response.statusCode() != 201) {
-            throw new RuntimeException("Error saving to server. Status: " + response.statusCode() + " " + response.body());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.user.error.save") + response.statusCode() + " " + response.body());
         }
     }
 
@@ -63,7 +65,7 @@ public class UserApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200 && response.statusCode() != 204) {
-            throw new RuntimeException("Error editing user. Status: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.user.error.edit") + response.statusCode());
         }
     }
 
@@ -76,7 +78,7 @@ public class UserApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200 && response.statusCode() != 204) {
-            throw new RuntimeException("Error while deleting on the server. Status: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.user.error.delete") + response.statusCode());
         }
     }
 

@@ -4,6 +4,7 @@ import com.example.client.dto.ErrorResponseDto;
 import com.example.client.dto.GenreRequestDto;
 import com.example.client.dto.GenreResponseDto;
 import com.example.client.dto.PageResponse;
+import com.example.client.util.LanguageManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +34,7 @@ public class GenreApiClient {
                     new TypeReference<List<GenreResponseDto>>() {}
             );
         } else {
-            throw new RuntimeException("Error loading genres: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.genre.error.load") + response.statusCode());
         }
     }
 
@@ -49,7 +50,7 @@ public class GenreApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 201 && response.statusCode() != 200) {
-            throw new RuntimeException("Error saving genre: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.genre.error.save") + response.statusCode());
         }
     }
 }

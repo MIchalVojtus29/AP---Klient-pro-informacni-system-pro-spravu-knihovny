@@ -15,6 +15,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.util.ResourceBundle;
+
 public class UsersController {
 
     @FXML private TableView<UserResponseDto> userTable;
@@ -23,6 +25,7 @@ public class UsersController {
     @FXML private TextField searchField;
     @FXML private Label pageLabel;
     @FXML private Button btnPrev, btnNext;
+    @FXML private ResourceBundle resources;
 
     private int currentPage = 0;
     private final int PAGE_SIZE = 20;
@@ -84,7 +87,7 @@ public class UsersController {
     }
 
     private void handleUsersError(Throwable err) {
-        System.err.println("Error loading users:" + err.getMessage());
+        System.err.println(resources.getString("user.load.error") + ": " + err.getMessage());
     }
 
     private PageResponse<UserResponseDto> fetchUsersTask(int page, String search) {
@@ -136,8 +139,8 @@ public class UsersController {
 
         if (selectedUser == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setHeaderText("Nothing selected");
-            alert.setContentText("Please select a user to edit.");
+            alert.setHeaderText(resources.getString("warning.noSelection"));
+            alert.setContentText(resources.getString("user.warning.selectEdit"));
             alert.showAndWait();
             return;
         }
@@ -168,7 +171,7 @@ public class UsersController {
         UserResponseDto selected = userTable.getSelectionModel().getSelectedItem();
 
         if (selected == null) {
-            showWarning("Nothing selected", "Please select a user to delete.");
+            showWarning(resources.getString("warning.noSelection"), resources.getString("user.warning.selectDelete"));
             return;
         }
 
@@ -193,19 +196,19 @@ public class UsersController {
         loadUsersFromServer();
     }
     private void handleDeleteError(Throwable err) {
-        showErrorAlert("Chyba při mazání", err.getMessage());
+        showErrorAlert(resources.getString("user.delete.error"), err.getMessage());
     }
     private boolean confirmDeletion(UserResponseDto user) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Delete user");
-        alert.setHeaderText("Are you sure you want to delete the user " + user.getFirstName() + " " + user.getLastName() + "?");
-        alert.setContentText("This action is irreversible.");
+        alert.setTitle(resources.getString("user.delete.title"));
+        alert.setHeaderText(resources.getString("user.delete.header") + " " + user.getFirstName() + " " + user.getLastName() + "?");
+        alert.setContentText(resources.getString("user.delete.content"));
         return alert.showAndWait().filter(bt -> bt == ButtonType.OK).isPresent();
     }
 
     private void showWarning(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Warning");
+        alert.setTitle(resources.getString("warning.title"));
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
@@ -213,7 +216,7 @@ public class UsersController {
 
     private void showErrorAlert(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
+        alert.setTitle(resources.getString("error.title"));
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();

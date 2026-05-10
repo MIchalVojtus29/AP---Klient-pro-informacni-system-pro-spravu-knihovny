@@ -4,35 +4,34 @@ import com.example.client.dto.UserCreateDto;
 import com.example.client.dto.UserResponseDto;
 import com.example.client.service.UserService;
 import com.example.client.util.AsyncManager;
+import com.example.client.util.SessionManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
-public class EditUserController {
+public class ProfileController {
 
     @FXML private TextField firstNameField;
     @FXML private TextField lastNameField;
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
-    @FXML private ComboBox<String> roleCombo;
     @FXML private PasswordField passwordField;
     @FXML private ResourceBundle resources;
 
     private final UserService userService = new UserService();
-    private final Map<String, String> roleMap = new LinkedHashMap<>();
     private Long userId;
 
     @FXML
     public void initialize() {
-        roleMap.put(resources.getString("role.admin"), "admin");
-        roleMap.put(resources.getString("role.librarian"), "librarian");
-        roleMap.put(resources.getString("role.reader"), "reader");
-
-        roleCombo.getItems().addAll(roleMap.keySet());
+    }
+    public void setUserData(UserResponseDto user) {
+        this.userId = Long.valueOf(user.getId());
+        firstNameField.setText(user.getFirstName());
+        lastNameField.setText(user.getLastName());
+        emailField.setText(user.getEmail());
+        phoneField.setText(user.getPhoneNumber());
 
         phoneField.setTextFormatter(new TextFormatter<>(change -> {
             String newText = change.getControlNewText();
@@ -43,35 +42,19 @@ public class EditUserController {
         }));
     }
 
-    public void setUserData(UserResponseDto user) {
-        this.userId = Long.valueOf(user.getId());
-        firstNameField.setText(user.getFirstName());
-        lastNameField.setText(user.getLastName());
-        emailField.setText(user.getEmail());
-        phoneField.setText(user.getPhoneNumber());
-
-        for (Map.Entry<String, String> entry : roleMap.entrySet()) {
-            if (entry.getValue().equalsIgnoreCase(user.getRole())) {
-                roleCombo.setValue(entry.getKey());
-                break;
-            }
-        }
-    }
-
     @FXML
     private void handleSave() {
         if (!validateInput()) return;
-
         UserCreateDto request = new UserCreateDto();
         request.setFirstName(firstNameField.getText().trim());
         request.setLastName(lastNameField.getText().trim());
         request.setEmail(emailField.getText().trim());
         request.setPhoneNumber(phoneField.getText().trim());
+
         String pass = passwordField.getText().trim();
         request.setPassword(pass.isEmpty() ? null : pass);
 
-        String selectedRoleText = roleCombo.getValue();
-        request.setRole(roleMap.get(selectedRoleText));
+        request.setRole(SessionManager.getLoggedInUser().getRole());
 
         AsyncManager.runAsync(
                 () -> performSaveTask(request),
@@ -90,13 +73,19 @@ public class EditUserController {
     }
 
     private void handleSaveSuccess(Void result) {
+        UserResponseDto loggedUser = SessionManager.getLoggedInUser();
+        if (loggedUser != null) {
+            loggedUser.setEmail(emailField.getText().trim());
+            loggedUser.setPhoneNumber(phoneField.getText().trim());
+        }
+
         closeWindow();
     }
 
     private void handleSaveError(Throwable ex) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(resources.getString("erro.titler"));
-        alert.setHeaderText(resources.getString("user.edit.error.saveHeader"));
+        alert.setTitle(resources.getString("error.title"));
+        alert.setHeaderText(resources.getString("profile.save.failed"));
         alert.setContentText(ex.getMessage());
         alert.showAndWait();
     }
@@ -112,13 +101,10 @@ public class EditUserController {
     }
 
     private boolean validateInput() {
-        if (firstNameField.getText().trim().isEmpty() ||
-                lastNameField.getText().trim().isEmpty() ||
-                emailField.getText().trim().isEmpty()) {
-
+        if (emailField.getText().trim().isEmpty()) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setHeaderText(resources.getString("validation.failed"));
-            alert.setContentText(resources.getString("validation.missingFields"));
+            alert.setContentText(resources.getString("validation.email.required"));
             alert.showAndWait();
             return false;
         }

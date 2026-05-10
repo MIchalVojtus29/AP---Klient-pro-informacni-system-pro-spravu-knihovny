@@ -104,7 +104,7 @@ public class AddBookController {
     }
 
     private void handleLoadError(Throwable ex) {
-        System.err.println("Error loading code lists: " + ex.getMessage());
+        System.err.println(resources.getString("book.add.code.error") + ex.getMessage());
     }
 
     private boolean isInputInvalid() {

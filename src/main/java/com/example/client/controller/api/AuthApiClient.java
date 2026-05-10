@@ -3,6 +3,7 @@ package com.example.client.controller.api;
 import com.example.client.dto.ErrorResponseDto;
 import com.example.client.dto.LoginRequestDto;
 import com.example.client.dto.UserResponseDto;
+import com.example.client.util.LanguageManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -48,7 +49,7 @@ public class AuthApiClient {
                 ErrorResponseDto errorDto = objectMapper.readValue(response.body(), ErrorResponseDto.class);
                 throw new RuntimeException(errorDto.getMessage());
             } catch (Exception e) {
-                throw new RuntimeException("Error communicating with the server. Status:" + response.statusCode());
+                throw new RuntimeException(LanguageManager.getBundle().getString("api.auth.error") + response.statusCode());
             }
         }
     }

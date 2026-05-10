@@ -4,6 +4,7 @@ import com.example.client.dto.BookRequestDto;
 import com.example.client.dto.BookResponseDto;
 import com.example.client.dto.ErrorResponseDto;
 import com.example.client.dto.PageResponse;
+import com.example.client.util.LanguageManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -54,7 +55,7 @@ public class BookApiClient {
                 ErrorResponseDto error = objectMapper.readValue(response.body(), ErrorResponseDto.class);
                 throw new RuntimeException(error.getMessage());
             } catch (Exception e) {
-                throw new RuntimeException("Failed to load books. Status: " + response.statusCode());
+                throw new RuntimeException(LanguageManager.getBundle().getString("api.book.error.load") + response.statusCode());
             }
         }
     }
@@ -71,7 +72,7 @@ public class BookApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 201 && response.statusCode() != 200) {
-            throw new RuntimeException("Error while saving: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.book.error.save") + response.statusCode());
         }
     }
     public void updateBook(Long id, BookRequestDto bookRequest) throws Exception {
@@ -86,12 +87,10 @@ public class BookApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
-            throw new RuntimeException("Error while editing: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.book.error.edit") + response.statusCode());
         }
     }
     public void deleteBook(Long id) throws Exception {
-        String finalUrl = BASE_URL + "/" + id;
-        System.out.println("Mazání na URL: " + finalUrl);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/" + id))
                 .header("Accept", "application/json")
@@ -101,7 +100,7 @@ public class BookApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200 && response.statusCode() != 204) {
-            throw new RuntimeException("Error while deleting on the server: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.book.error.delete") + response.statusCode());
         }
     }
 }

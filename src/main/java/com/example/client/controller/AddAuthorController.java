@@ -22,7 +22,10 @@ public class AddAuthorController {
     @FXML
     private void handleSave() {
         if (firstNameField.getText().isEmpty() || lastNameField.getText().isEmpty()) {
-            showError("Validation", "First and last name are required.");
+            showError(
+                    resources.getString("validation.failed"),
+                    resources.getString("author.add.validation.nameRequired")
+            );
             return;
         }
 
@@ -53,7 +56,10 @@ public class AddAuthorController {
     }
 
     private void handleSaveError(Throwable ex) {
-        showError("Error while saving", ex.getMessage());
+        showError(
+                resources.getString("author.add.error.saveHeader"),
+                ex.getMessage()
+        );
     }
 
     @FXML

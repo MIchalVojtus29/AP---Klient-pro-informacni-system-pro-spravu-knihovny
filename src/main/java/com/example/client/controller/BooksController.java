@@ -4,6 +4,7 @@ import com.example.client.dto.BookResponseDto;
 import com.example.client.service.BookService;
 import com.example.client.util.AsyncManager;
 import com.example.client.util.LanguageManager;
+import com.example.client.util.SessionManager;
 import com.example.client.util.View;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -26,7 +27,6 @@ import java.util.ResourceBundle;
 public class BooksController {
 
     @FXML private TableView<BookResponseDto> bookTable;
-    @FXML private TableColumn<BookResponseDto, Long> colId;
     @FXML private TableColumn<BookResponseDto, String> colTitle;
     @FXML private TableColumn<BookResponseDto, String> colAuthor;
     @FXML private TableColumn<BookResponseDto, String> colGenre;
@@ -36,10 +36,17 @@ public class BooksController {
     @FXML private Label pageLabel;
     @FXML private Button btnPrev, btnNext;
     @FXML private ResourceBundle resources;
+    @FXML
+    private Button btnAddBook;
+    @FXML
+    private Button btnEditBook;
+    @FXML
+    private Button btnDelBook;
 
     private int currentPage = 0;
     private final int PAGE_SIZE = 20;
     private final BookService bookService;
+
     private javafx.collections.ObservableList<BookResponseDto> masterData = FXCollections.observableArrayList();
 
     public BooksController() {
@@ -64,10 +71,22 @@ public class BooksController {
         bookTable.setItems(filteredData);
 
         loadBooksFromServer();
+
+        String role = SessionManager.getLoggedInUser().getRole();
+
+        boolean canManage = role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("librarian");
+
+        btnAddBook.setVisible(canManage);
+        btnAddBook.managedProperty().bind(btnAddBook.visibleProperty());
+
+        btnEditBook.setVisible(canManage);
+        btnEditBook.managedProperty().bind(btnEditBook.visibleProperty());
+
+        btnDelBook.setVisible(canManage);
+        btnDelBook.managedProperty().bind(btnDelBook.visibleProperty());
     }
 
     private void setupTableColumns() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colAuthor.setCellValueFactory(new PropertyValueFactory<>("authorName"));
         colGenre.setCellValueFactory(new PropertyValueFactory<>("genreName"));

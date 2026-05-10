@@ -21,7 +21,10 @@ public class AddGenreController {
     private void handleSave() {
         String name = nameField.getText().trim();
         if (name.isEmpty()) {
-            showError("Validation", "The genre name cannot be empty.");
+            showError(
+                    resources.getString("validation.failed"),
+                    resources.getString("genre.add.validation.emptyName")
+            );
             return;
         }
 
@@ -48,7 +51,10 @@ public class AddGenreController {
     }
 
     private void handleSaveError(Throwable ex) {
-        showError("Error while saving", ex.getMessage());
+        showError(
+                resources.getString("genre.add.error.saveHeader"),
+                ex.getMessage()
+        );
     }
 
     @FXML

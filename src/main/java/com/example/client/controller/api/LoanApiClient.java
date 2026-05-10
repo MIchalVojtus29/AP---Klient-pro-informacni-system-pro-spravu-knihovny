@@ -1,5 +1,7 @@
 package com.example.client.controller.api;
 
+import com.example.client.util.LanguageManager;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -32,13 +34,11 @@ public class LoanApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200 && response.statusCode() != 204) {
-            throw new RuntimeException("Error returning book. Status: " + response.statusCode());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.loan.error.return") + response.statusCode());
         }
     }
 
     public void createLoanJson(String json) throws Exception {
-        System.out.println("Odesílám JSON: " + json);
-
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL))
                 .header("Content-Type", "application/json")
@@ -48,7 +48,7 @@ public class LoanApiClient {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() >= 400) {
-            throw new RuntimeException("Server error " + response.statusCode() + ": " + response.body());
+            throw new RuntimeException(LanguageManager.getBundle().getString("api.loan.error.server") + response.statusCode() + ": " + response.body());
         }
     }
 }

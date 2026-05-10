@@ -29,7 +29,7 @@
         <ComboBox fx:id="roleCombo" maxWidth="Infinity" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
         <Label text="%user.password" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-        <PasswordField fx:id="passwordField" promptText="Ponechte prázdné pro zachování hesla" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+        <PasswordField fx:id="passwordField" promptText="%user.password.prompt" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
     </GridPane>
 
     <Region VBox.vgrow="ALWAYS" />

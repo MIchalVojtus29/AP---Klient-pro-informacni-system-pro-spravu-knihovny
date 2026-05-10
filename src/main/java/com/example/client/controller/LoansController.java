@@ -42,6 +42,29 @@ public class LoansController {
         setupTable();
         setupFiltering();
         loadLoansFromServer();
+
+        loanTable.setRowFactory(tv -> new TableRow<LoanResponseDto>() {
+            @Override
+            protected void updateItem(LoanResponseDto item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (item == null || empty) {
+                    setStyle("");
+                } else {
+                    java.time.LocalDate today = java.time.LocalDate.now();
+
+                    boolean isOverdue = "loaned".equalsIgnoreCase(item.getStatus()) &&
+                            item.getDueDate() != null &&
+                            item.getDueDate().isBefore(today);
+
+                    if (isOverdue) {
+                        setStyle("-fx-background-color: #ffcccc; -fx-text-background-color: black;");
+                    } else {
+                        setStyle("");
+                    }
+                }
+            }
+        });
     }
 
     private void setupTable() {
@@ -93,7 +116,7 @@ public class LoansController {
 
     private void handleError(Throwable err) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("Error: " + err.getMessage());
+        alert.setContentText(resources.getString("error.title") + err.getMessage());
         alert.show();
     }
 
@@ -122,7 +145,7 @@ public class LoansController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            showErrorAlert("Error opening window", e.getMessage());
+            showErrorAlert(resources.getString("error.modal.open"), e.getMessage());
         }
     }
 
@@ -139,11 +162,20 @@ public class LoansController {
             return;
         }
 
-        AsyncManager.runAsync(
-                () -> performReturnTask(selected.getId()),
-                this::handleReturnSuccess,
-                this::handleError
-        );
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(resources.getString("loans.return.confirm.title"));
+        alert.setHeaderText(resources.getString("loans.return.confirm.header"));
+        alert.setContentText(resources.getString("loans.return.confirm.content") + " " + selected.getBookTitle() + "?");
+
+        java.util.Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            AsyncManager.runAsync(
+                    () -> performReturnTask(selected.getId()),
+                    this::handleReturnSuccess,
+                    this::handleError
+            );
+        }
     }
 
     private Void performReturnTask(Long loanId) {

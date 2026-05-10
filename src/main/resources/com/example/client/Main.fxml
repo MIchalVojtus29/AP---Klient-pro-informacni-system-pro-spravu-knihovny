@@ -14,19 +14,20 @@
                 </font>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="userNameLabel" text="User Name" textFill="WHITE" />
+            <Label fx:id="userNameLabel" text="User Name" textFill="WHITE" onMouseClicked="#handleOpenProfile"/>
             <Button onAction="#handleLogout" style="-fx-background-color: #e74c3c;" text="%main.logout" textFill="WHITE" />
         </HBox>
     </top>
 
     <left>
         <VBox spacing="10.0" style="-fx-background-color: #ecf0f1; -fx-padding: 15;" prefWidth="150.0">
-            <Button maxWidth="Infinity" text="%menu.catalog" onAction="#handleShowBooks" />
-            <Button maxWidth="Infinity" text="%menu.loans" onAction="#handleShowLoans"/>
-            <Button maxWidth="Infinity" text="%menu.users" onAction="#handleShowUsers" />
+            <Button fx:id="btnCatalog" maxWidth="Infinity" text="%menu.catalog" onAction="#handleShowBooks" />
+            <Button fx:id="btnLoans" maxWidth="Infinity" text="%menu.loans" onAction="#handleShowLoans"/>
+            <Button fx:id="btnUsers" maxWidth="Infinity" text="%menu.users" onAction="#handleShowUsers" />
             <Region VBox.vgrow="ALWAYS" />
 
             <Separator />
+            <Button fx:id="btnAbout" maxWidth="Infinity" onAction="#handleShowAbout" text="%btn.about" />
             <Button fx:id="btnLang" maxWidth="Infinity" onAction="#handleLanguageSwitch" text="%btn.switchLang" />
         </VBox>
     </left>

@@ -33,6 +33,14 @@ public class AddUserController {
 
         roleCombo.getItems().addAll(roleMap.keySet());
         roleCombo.getSelectionModel().selectFirst();
+
+        phoneField.setTextFormatter(new TextFormatter<>(change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("\\d{0,9}")) {
+                return change;
+            }
+            return null;
+        }));
     }
 
     @FXML
@@ -73,8 +81,8 @@ public class AddUserController {
 
     private void handleSaveError(Throwable ex) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText("Failed to save user");
+        alert.setTitle(resources.getString("erro.titler"));
+        alert.setHeaderText(resources.getString("user.add.error.saveHeader"));
         alert.setContentText(ex.getMessage());
         alert.showAndWait();
     }
@@ -96,11 +104,21 @@ public class AddUserController {
                 passwordField.getText().trim().isEmpty()) {
 
             Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setHeaderText("Missing credentials");
-            alert.setContentText("Please fill in all required fields");
+            alert.setHeaderText(resources.getString("validation.failed"));
+            alert.setContentText(resources.getString("validation.missingFields"));
             alert.showAndWait();
             return false;
         }
+
+        String phone = phoneField.getText().trim();
+        if (!phone.matches("\\d{9}")) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText(resources.getString("validation.failed"));
+            alert.setContentText(resources.getString("validation.phone.invalid"));
+            alert.showAndWait();
+            return false;
+        }
+
         return true;
     }
 }

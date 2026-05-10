@@ -122,8 +122,8 @@ public class AddLoanController {
 
     private void handleError(Throwable err) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Chyba");
-        alert.setHeaderText("Akce se nezdařila");
+        alert.setTitle(resources.getString("error.save.title"));
+        alert.setHeaderText(resources.getString("loan.action.error"));
         alert.setContentText(err.getMessage());
         alert.showAndWait();
     }

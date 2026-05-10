@@ -2,19 +2,23 @@ package com.example.client.controller;
 
 import com.example.client.dto.UserResponseDto;
 import com.example.client.util.LanguageManager;
+import com.example.client.util.SessionManager;
 import com.example.client.util.UserSession;
 import com.example.client.util.View;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -30,9 +34,24 @@ public class MainController {
     @FXML private ResourceBundle resources;
 
     @FXML
+    private Button btnUsers;
+    @FXML
+    private Button btnLoans;
+    @FXML
+    private Button btnCatalog;
+
+    @FXML
     public void initialize() {
         setupUserInterface();
         handleShowBooks();
+
+        String role = SessionManager.getLoggedInUser().getRole();
+
+        btnUsers.setVisible(role.equalsIgnoreCase("admin"));
+        btnUsers.managedProperty().bind(btnUsers.visibleProperty());
+
+        btnLoans.setVisible(role.equalsIgnoreCase("admin") || role.equalsIgnoreCase("librarian"));
+        btnLoans.managedProperty().bind(btnLoans.visibleProperty());
     }
 
     private void setupUserInterface() {
@@ -104,5 +123,46 @@ public class MainController {
         Stage stage = (Stage) userNameLabel.getScene().getWindow();
         stage.setScene(scene);
         stage.centerOnScreen();
+    }
+
+    @FXML
+    private void handleShowAbout() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/client/About.fxml"), resources);
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle(resources.getString("about.title"))
+            ;
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleOpenProfile() {
+        try {
+            URL fxmlLocation = getClass().getResource("/com/example/client/EditProfile.fxml");
+
+            FXMLLoader loader = new FXMLLoader(fxmlLocation, resources);
+            Parent root = loader.load();
+
+            ProfileController controller = loader.getController();
+            controller.setUserData(SessionManager.getLoggedInUser());
+
+            Stage stage = new Stage();
+            stage.setTitle(resources.getString("profile.edit.title"));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            setupUserInterface();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.client.dto;
 
+import com.example.client.util.LanguageManager;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class AuthorResponseDto {
     private String lastName;
     @Override
     public String toString() {
-        if (firstName == null && lastName == null) return "Unknown Author";
+        if (firstName == null && lastName == null) return LanguageManager.getBundle().getString("author.unknown");
         return (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "");
     }
 }
